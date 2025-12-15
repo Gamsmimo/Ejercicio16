@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto 16 - Desplegable Personalizado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .project-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .dropdown-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px 0;
+        }
+        
+        .dropdown-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            background-color: white;
+            border: 2px solid #dce4ec;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        
+        .dropdown-header:hover {
+            border-color: #3498db;
+        }
+        
+        .dropdown-header.open {
+            border-color: #3498db;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            color: #2c3e50;
+        }
+        
+        .dropdown-header.selected {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .dropdown-icon {
+            transition: transform 0.3s ease;
+            color: #7f8c8d;
+        }
+        
+        .dropdown-header.open .dropdown-icon {
+            transform: rotate(180deg);
+            color: #3498db;
+        }
+        
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border: 2px solid #3498db;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            z-index: 10;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .dropdown-list.open {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .dropdown-item {
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f5f5f5;
+            color: #555;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            padding-left: 25px;
+        }
+        
+        .dropdown-item.selected {
+            background-color: #e8f4fc;
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .dropdown-item.selected::before {
+            content: "✓";
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .states-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .state-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .state-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .state-description {
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .state-visual {
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+            text-align: center;
+            font-weight: 500;
+            color: #7f8c8d;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .state-visual.selected {
+            color: #2c3e50;
+        }
+        
+        .instructions {
+            background-color: #f0f7ff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 40px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .instructions code {
+            background-color: #e8f4fc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .states-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Proyecto 16: Desplegable Personalizado</h1>
+            <p class="description">
+                Este proyecto implementa un menú desplegable completamente personalizado usando HTML, CSS y JavaScript.
+                El desplegable permite a los usuarios seleccionar un elemento de una lista, con estados predeterminado, abierto y seleccionado.
+            </p>
+        </header>
+        
+        <main>
+            <section class="project-section">
+                <h2 class="dropdown-label">Desplegable Personalizado</h2>
+                <div class="dropdown-container">
+                    <div class="dropdown-header" id="dropdownHeader">
+                        <span id="dropdownText">Selecciona un elemento</span>
+                        <i class="fas fa-chevron-down dropdown-icon" id="dropdownIcon"></i>
+                    </div>
+                    <div class="dropdown-list" id="dropdownList">
+                        <div class="dropdown-item" data-value="first">Primer elemento</div>
+                        <div class="dropdown-item" data-value="second">Segundo elemento</div>
+                        <div class="dropdown-item" data-value="third">Tercer elemento</div>
+                        <div class="dropdown-item" data-value="fourth">Cuarto elemento</div>
+                        <div class="dropdown-item" data-value="fifth">Quinto elemento</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="states-container">
+                <div class="state-box">
+                    <h3 class="state-title">Estado Predeterminado</h3>
+                    <p class="state-description">Cuando no se ha seleccionado ningún elemento, muestra el texto de marcador de posición.</p>
+                    <div class="state-visual">
+                        <span>Selecciona un elemento <i class="fas fa-chevron-down"></i></span>
+                    </div>
+                </div>
+                
+                <div class="state-box">
+                    <h3 class="state-title">Estado Abierto</h3>
+                    <p class="state-description">Al hacer clic, se despliegan todas las opciones disponibles para seleccionar.</p>
+                    <div class="state-visual">
+                        <span>Tercer elemento <i class="fas fa-chevron-up"></i></span>
+                        <div style="margin-top: 10px; font-size: 0.9rem; color: #555;">
+                            Primer elemento<br>
+                            Segundo elemento<br>
+                            <strong>Tercer elemento</strong><br>
+                            Cuarto elemento<br>
+                            Quinto elemento
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="state-box">
+                    <h3 class="state-title">Estado Seleccionado</h3>
+                    <p class="state-description">Después de seleccionar un elemento, se muestra en el desplegable y se resalta en la lista.</p>
+                    <div class="state-visual selected">
+                        <span>Tercer elemento <i class="fas fa-chevron-down"></i></span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="instructions">
+                <h3>Características implementadas</h3>
+                <ul>
+                    <li><strong>Estado predeterminado:</strong> Muestra el texto "Selecciona un elemento" con una flecha hacia abajo.</li>
+                    <li><strong>Estado abierto:</strong> Al hacer clic, se despliegan todas las opciones y la flecha cambia de dirección.</li>
+                    <li><strong>Estado seleccionado:</strong> Muestra el elemento elegido y lo resalta en la lista con un símbolo de verificación.</li>
+                    <li><strong>Cierre automático:</strong> Al seleccionar un elemento, el desplegable se cierra automáticamente.</li>
+                    <li><strong>Cierre al hacer clic fuera:</strong> El desplegable se cierra si se hace clic en cualquier parte fuera de él.</li>
+                    <li><strong>Interacción con teclado:</strong> Se puede navegar por las opciones usando las teclas de flecha y seleccionar con Enter.</li>
+                </ul>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Proyecto 16 - Nivel Intermedio - Desplegable personalizado con HTML, CSS y JavaScript</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const dropdownHeader = document.getElementById('dropdownHeader');
+            const dropdownText = document.getElementById('dropdownText');
+            const dropdownIcon = document.getElementById('dropdownIcon');
+            const dropdownList = document.getElementById('dropdownList');
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            
+            // Variables de estado
+            let isOpen = false;
+            let selectedIndex = -1;
+            
+            // Abrir/cerrar el desplegable
+            dropdownHeader.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown();
+            });
+            
+            // Función para alternar el estado del desplegable
+            function toggleDropdown() {
+                isOpen = !isOpen;
+                
+                if (isOpen) {
+                    dropdownHeader.classList.add('open');
+                    dropdownList.classList.add('open');
+                    dropdownIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    
+                    // Si hay un elemento seleccionado, resaltarlo
+                    if (selectedIndex >= 0) {
+                        highlightSelectedItem();
+                    }
+                    
+                    // Enfocar el primer elemento para navegación con teclado
+                    setTimeout(() => {
+                        if (selectedIndex >= 0) {
+                            dropdownItems[selectedIndex].focus();
+                        } else {
+                            dropdownItems[0].focus();
+                        }
+                    }, 10);
+                } else {
+                    dropdownHeader.classList.remove('open');
+                    dropdownList.classList.remove('open');
+                    dropdownIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            }
+            
+            // Manejar la selección de elementos
+            dropdownItems.forEach((item, index) => {
+                item.addEventListener('click', function() {
+                    selectItem(index);
+                });
+                
+                // Hacer que los elementos sean enfocables para navegación con teclado
+                item.setAttribute('tabindex', '0');
+                
+                // Manejar eventos de teclado en cada elemento
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectItem(index);
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const nextIndex = (index + 1) % dropdownItems.length;
+                        dropdownItems[nextIndex].focus();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        const prevIndex = (index - 1 + dropdownItems.length) % dropdownItems.length;
+                        dropdownItems[prevIndex].focus();
+                    } else if (e.key === 'Escape') {
+                        toggleDropdown();
+                        dropdownHeader.focus();
+                    }
+                });
+            });
+            
+            // Función para seleccionar un elemento
+            function selectItem(index) {
+                // Remover la selección previa
+                dropdownItems.forEach(item => {
+                    item.classList.remove('selected');
+                });
+                
+                // Aplicar la nueva selección
+                dropdownItems[index].classList.add('selected');
+                dropdownText.textContent = dropdownItems[index].textContent;
+                dropdownHeader.classList.add('selected');
+                
+                // Actualizar el índice seleccionado
+                selectedIndex = index;
+                
+                // Cerrar el desplegable
+                toggleDropdown();
+                
+                // Mostrar un mensaje en consola (opcional, para demostración)
+                console.log(`Elemento seleccionado: ${dropdownItems[index].textContent} (valor: ${dropdownItems[index].getAttribute('data-value')})`);
+            }
+            
+            // Función para resaltar el elemento seleccionado
+            function highlightSelectedItem() {
+                dropdownItems.forEach((item, index) => {
+                    if (index === selectedIndex) {
+                        item.classList.add('selected');
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // Cerrar el desplegable al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!dropdownHeader.contains(e.target) && !dropdownList.contains(e.target)) {
+                    if (isOpen) {
+                        toggleDropdown();
+                    }
+                }
+            });
+            
+            // Navegación con teclado desde el header
+            dropdownHeader.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    
+                    if (!isOpen) {
+                        toggleDropdown();
+                    }
+                    
+                    // Si hay una selección previa, enfocar ese elemento
+                    if (selectedIndex >= 0) {
+                        dropdownItems[selectedIndex].focus();
+                    } else {
+                        dropdownItems[0].focus();
+                    }
+                } else if (e.key === 'Escape' && isOpen) {
+                    toggleDropdown();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
